@@ -12,7 +12,6 @@ public class KeyPressMove : MonoBehaviour
     bool leftFlag = false;
     bool pushFlag = false;
     bool jumpFlag = false;
-
     bool groundFlag = false;
 
     Rigidbody2D rbody;
@@ -37,7 +36,7 @@ public class KeyPressMove : MonoBehaviour
         if (Input.GetKey("left"))
         {
             vx = -speed;
-            leftFlag = false;
+            leftFlag = true;
         }
 
         if (Input.GetKey("space") && groundFlag)
@@ -45,8 +44,6 @@ public class KeyPressMove : MonoBehaviour
             if (pushFlag == false)
             {
                 jumpFlag = true;
-
-                
                 pushFlag = true;
             }
         }
