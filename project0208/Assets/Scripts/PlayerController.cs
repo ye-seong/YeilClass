@@ -5,15 +5,15 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     Rigidbody2D rbody;
-    Animator animator;
     float axisH = 0.0f;
     public float speed = 3.0f;
 
     public float jump = 9.0f;
-    public LayerMask groundLayer;   //착지할 수 있는 레이어
-    bool goJump = false;            //점프 개시 플래그
-    bool onGround = false;          //지면에 서 있는 플래그
+    public LayerMask groundLayer;   // 착지할수 있는 레이어
+    bool goJump = false;            // 점프 개시 플래그
+    bool onGround = false;          // 지면에 서 있는 플래그
 
+    Animator animator;
     public string stopAnime = "PlayerStop";
     public string moveAnime = "PlayerMove";
     public string jumpAnime = "PlayerJump";
@@ -34,20 +34,19 @@ public class PlayerController : MonoBehaviour
         nowAnime = stopAnime;
         oldAnime = stopAnime;
 
-        gameState = "Playing";
+        gameState = "playing";
     }
 
     // Update is called once per frame
     void Update()
     {
-        //if (gameState != "playing")
-        //{
-        //    return;
-        //}
+        if (gameState != "playing")
+        {
+            return;
+        }
 
         axisH = Input.GetAxisRaw("Horizontal");
 
-        //플립
         if (axisH > 0.0f)
         {
             transform.localScale = new Vector2(1, 1);
@@ -57,7 +56,6 @@ public class PlayerController : MonoBehaviour
             transform.localScale = new Vector2(-1, 1);
         }
 
-        //점프
         if (Input.GetButtonDown("Jump"))
         {
             Jump();
@@ -66,14 +64,15 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        //if (gameState != "playing")
-        //{
-        //    return;
-        //}
+        if (gameState != "playing")
+        {
+            return;
+        }
 
-        onGround = Physics2D.Linecast(transform.position, 
-                                          transform.position - (transform.up * 0.1f), 
-                                          groundLayer);
+        onGround = Physics2D.Linecast(transform.position,
+                                        transform.position - (transform.up * 0.1f),
+                                        groundLayer);
+
         if (onGround || axisH != 0)
         {
             rbody.velocity = new Vector2(axisH * speed, rbody.velocity.y);
@@ -107,15 +106,14 @@ public class PlayerController : MonoBehaviour
             oldAnime = nowAnime;
             animator.Play(nowAnime);
         }
+
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Goal")
         {
             Goal();
-            gameState = "gameClear";
-            GameStop();
         }
 
         if (collision.gameObject.tag == "Dead")
@@ -123,7 +121,6 @@ public class PlayerController : MonoBehaviour
             Dead();
         }
     }
-
 
     void Dead()
     {
@@ -137,7 +134,9 @@ public class PlayerController : MonoBehaviour
 
     void Goal()
     {
-        animator.Play(clearAnime);        
+        animator.Play(clearAnime);
+        gameState = "gameClear";
+        GameStop();
     }
 
     void GameStop()
@@ -145,7 +144,7 @@ public class PlayerController : MonoBehaviour
         rbody.velocity = new Vector2(0, 0);
     }
 
-    public void Jump()
+    void Jump()
     {
         goJump = true;
     }
